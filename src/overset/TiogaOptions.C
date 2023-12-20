@@ -46,6 +46,10 @@ TiogaOptions::load(const YAML::Node& node)
     adjustResolutionsForFringes_ =
       node["adjust_mandatory_fringe_resolutions"].as<bool>();
   }
+
+  if (node["use_adaptive_hole_map"]) {
+    useAdaptiveHoleMapAlgorithm_ = node["use_adaptive_hole_map"].as<bool>();
+  }
 }
 
 void
@@ -58,6 +62,9 @@ TiogaOptions::set_options(TIOGA::tioga& tg)
 
   if (hasNumFringe_)
     tg.setNfringe(&nFringe_);
+
+  if (useAdaptiveHoleMapAlgorithm_)
+    tg.setHoleMapAlgorithm(1);
 }
 
 } // namespace tioga_nalu

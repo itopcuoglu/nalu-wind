@@ -98,6 +98,8 @@ private:
   //! Flag indicating whether the node/cell resolutions should be adjusted for
   //! mandatory fringes
   bool adjustResolutionsForFringes_{true};
+  //! Flag for invoking the adaptive hole map algorithm in Tioga
+  bool useAdaptiveHoleMapAlgorithm_{false};
 };
 
 } // namespace tioga_nalu
