@@ -533,6 +533,24 @@ TiogaSTKIface::update_solution(
   for (auto& tb : blocks_)
     tb->update_solution(fields);
 
+  // Synchronize density data for shared nodes
+  sierra::nalu::ScalarFieldType* density =
+    meta_.get_field<double>(stk::topology::NODE_RANK, "density");
+  std::vector<const stk::mesh::FieldBase*> pvecd{density};
+  stk::mesh::copy_owned_to_shared(bulk_, pvecd);
+
+  // Synchronize pressure data for shared nodes
+  sierra::nalu::ScalarFieldType* pressure =
+    meta_.get_field<double>(stk::topology::NODE_RANK, "pressure");
+  std::vector<const stk::mesh::FieldBase*> pvecp{pressure};
+  stk::mesh::copy_owned_to_shared(bulk_, pvecp);
+
+  // Synchronize velocity data for shared nodes
+  sierra::nalu::VectorFieldType* velocity =
+    meta_.get_field<double>(stk::topology::NODE_RANK, "velocity");
+  std::vector<const stk::mesh::FieldBase*> pvecv{velocity};
+  stk::mesh::copy_owned_to_shared(bulk_, pvecv);
+
   for (auto& finfo : fields) {
     auto* fld = finfo.field_;
     fld->modify_on_host();
@@ -549,7 +567,6 @@ TiogaSTKIface::overset_update_field(
 {
   constexpr int row_major = 0;
   sierra::nalu::OversetFieldData fdata{field, nrows, ncols};
-
   field->sync_to_host();
 
   for (auto& tb : blocks_)
